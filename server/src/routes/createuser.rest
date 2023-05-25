@@ -1,0 +1,4 @@
+# @name getSearchResult
+
+GET http://localhost:5000/users/search?q=test
+Content-Type: application/json
