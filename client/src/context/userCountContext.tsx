@@ -7,18 +7,16 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-interface UserProviderProps {
-  children: ReactNode;
-}
-
-export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
+export const UserProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [userCount, setUserCount] = useState<number>(0);
 
   const fetchUserCount = async () => {
     try {
       const response = await fetch("http://localhost:5000/users/count");
       const data = await response.json();
-      console.log(data); // Check the value of data.count
+
       if (data && data.count !== null) {
         setUserCount(data.count);
       } else {

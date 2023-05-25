@@ -24,13 +24,10 @@ interface UserBody {
 
 export const userCount = async (req: Request, res: Response) => {
   try {
-    console.log("userCount called"); // Add logging
     const db = await DB.getDB();
     const count = await db.collection<User>("user").countDocuments({});
-    console.log("Count: ", count); // Add logging
     res.json({ count });
   } catch (err) {
-    console.log("Error: ", err); // Add logging
     if (err instanceof Error) {
       res.status(500).json({ message: err.message });
     } else {
@@ -38,6 +35,8 @@ export const userCount = async (req: Request, res: Response) => {
     }
   }
 };
+
+// Create new user entry in user collection
 
 export const addUser = async (
   req: Request<any, any, UserBody>,
@@ -66,7 +65,7 @@ export const addUser = async (
   }
 };
 
-// DELETE USER
+// Delete user with ID
 
 export const deleteUser = async (
   req: Request<{ id: string }, any, any>,
@@ -90,7 +89,7 @@ export const deleteUser = async (
   }
 };
 
-// SEARCH DATABASE FOR USER
+// Search user collection with id, firstname or lastname
 
 export const searchUser = async (req: Request, res: Response) => {
   const searchTerm = req.query.q as string;
@@ -108,7 +107,6 @@ export const searchUser = async (req: Request, res: Response) => {
     }
     const db = await DB.getDB();
     const users = await db.collection<User>("user").find(query).toArray();
-    console.log(users);
     res.json(users);
   } catch (err) {
     if (err instanceof Error) {

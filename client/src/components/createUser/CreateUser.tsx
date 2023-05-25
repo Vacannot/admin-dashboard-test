@@ -9,12 +9,8 @@ import {
 } from "@mui/material";
 import React, { useState, FormEvent, useContext } from "react";
 import UserContext from "../../context/userCountContext";
-
-interface User {
-  firstName: string;
-  lastName: string;
-  email: string;
-}
+import useCreateUser from "../../hooks/useCreateUser";
+import { iDisplayUser } from "../../interfaces/interface";
 
 export const CreateUser = () => {
   const [firstName, setFirstName] = useState<string>("");
@@ -27,6 +23,7 @@ export const CreateUser = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState<
     "success" | "info" | "warning" | "error"
   >("success");
+  const { createUser, isLoading } = useCreateUser();
 
   const validateEmail = (email: string) => {
     const regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
@@ -45,44 +42,30 @@ export const CreateUser = () => {
       return;
     }
 
-    const user: User = {
+    const user: iDisplayUser = {
       firstName,
       lastName,
       email,
     };
 
-    console.log(user);
-
-    try {
-      const response = await fetch("http://localhost:5000/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setSnackbarMessage(
-          `User created with name: ${data.firstName + " " + data.lastName}`
-        );
-        setSnackbarSeverity("success");
-        setSnackbarOpen(true);
-        fetchUserCount?.();
-      } else {
-        setSnackbarMessage(`Failed to create user: ${data.message}`);
-        setSnackbarSeverity("error");
-        setSnackbarOpen(true);
-      }
-
-      setFirstName("");
-      setLastName("");
-      setEmail("");
-    } catch (error) {
-      console.error("Error:", error);
+    const response = await createUser(user);
+    if (response.success) {
+      setSnackbarMessage(
+        `User created with name: ${
+          response.user?.firstName + " " + response.user?.lastName
+        }`
+      );
+      setSnackbarSeverity("success");
+      fetchUserCount?.();
+    } else {
+      setSnackbarMessage(`Failed to create user: ${response.message}`);
+      setSnackbarSeverity("error");
     }
+    setSnackbarOpen(true);
+
+    setFirstName("");
+    setLastName("");
+    setEmail("");
   };
 
   return (

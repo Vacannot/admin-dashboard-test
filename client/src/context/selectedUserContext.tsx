@@ -7,7 +7,7 @@ interface SelectedUserContextType {
 
 const defaultContextValue: SelectedUserContextType = {
   selectedUserId: null,
-  setSelectedUserId: () => {}, // Initial setter function does nothing
+  setSelectedUserId: () => {},
 };
 
 export const SelectedUserContext =

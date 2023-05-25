@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useState } from "react";
+import { FC, useContext, useState } from "react";
 import {
   Card,
   CardContent,
@@ -12,59 +12,28 @@ import {
   DialogActions,
 } from "@mui/material";
 import UserContext from "../../context/userCountContext";
-import { useSearchTerm } from "../../context/searchTermContext";
 import { SelectedUserContext } from "../../context/selectedUserContext";
+import useDeleteUser from "../../hooks/useDeleteUser";
+import useFetchUser from "../../hooks/useFetchUser";
 
-export interface iUser {
-  _id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  createDateTime: number;
-}
-
-interface UserDetailsProps {
-  id: string;
-}
-
-export const UserDetails: FC<UserDetailsProps> = ({ id }) => {
-  const [user, setUser] = useState<iUser | null>(null);
+export const UserDetails: FC<{ id: string }> = ({ id }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const userContext = useContext(UserContext);
   const { userCount, fetchUserCount } = userContext || {};
   const { setSelectedUserId } = useContext(SelectedUserContext);
-  const { searchTerm } = useSearchTerm();
 
-  useEffect(() => {
-    fetch(`http://localhost:5000/users/${id}`)
-      .then((res) => res.json())
-      .then(setUser)
-      .catch((err) => {
-        console.error(err);
-        setUser(null);
-      });
-  }, [id]);
+  const user = useFetchUser(id);
 
-  const handleDelete = () => {
-    if (user) {
-      fetch(`http://localhost:5000/users/${user._id}`, {
-        method: "DELETE",
-      })
-        .then((res) => {
-          if (res.ok) {
-            console.log("User Deleted");
-            fetchUserCount?.();
-            setOpenDialog(false);
-            setSelectedUserId(null);
-          } else {
-            console.error("Failed to delete user");
-          }
-        })
-        .catch((err) => {
-          console.error("Error:", err);
-        });
-    }
-  };
+  if (!fetchUserCount) {
+    return <Typography>Loading...</Typography>;
+  }
+
+  const handleDelete = useDeleteUser({
+    userId: user?._id || null,
+    fetchUserCount,
+    setOpenDialog,
+    setSelectedUserId,
+  });
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -97,7 +66,7 @@ export const UserDetails: FC<UserDetailsProps> = ({ id }) => {
             Account Created: {new Date(user.createDateTime).toLocaleString()}
           </Typography>
           <Button
-            onClick={handleOpenDialog} // change this to open the dialog
+            onClick={handleOpenDialog}
             variant="outlined"
             color="error"
             sx={{ mt: 3 }}

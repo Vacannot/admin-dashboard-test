@@ -11,10 +11,6 @@ export const Dashboard = () => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const { searchTerm } = useSearchTerm();
 
-  useEffect(() => {
-    console.log(selectedUserId);
-  }, [selectedUserId]);
-
   return (
     <Box
       sx={{

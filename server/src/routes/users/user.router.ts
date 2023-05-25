@@ -10,12 +10,6 @@ export interface User {
   createDateTime: number;
 }
 
-interface UserBody {
-  firstName: string;
-  lastName: string;
-  email: string;
-}
-
 interface UsersParams {
   skip?: number;
   limit?: number;

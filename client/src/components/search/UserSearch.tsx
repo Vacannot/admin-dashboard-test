@@ -2,7 +2,7 @@ import InputBase from "@mui/material/InputBase";
 import { styled, alpha } from "@mui/material/styles";
 import SearchIcon from "@mui/icons-material/Search";
 import { useSearchTerm } from "../../context/searchTermContext";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Box, Button, Snackbar } from "@mui/material";
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({

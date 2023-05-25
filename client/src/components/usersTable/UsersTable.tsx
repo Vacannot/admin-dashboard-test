@@ -12,13 +12,12 @@ import {
   Snackbar,
   Box,
 } from "@mui/material";
-import { useEffect, useState, useContext } from "react";
-import { iUser } from "../userDetails/UserDetails";
+import { useState, useContext } from "react";
 import { SelectedUserContext } from "../../context/selectedUserContext";
 import UserContext from "../../context/userCountContext";
+import useTableData from "../../hooks/useTableData";
 
 export const UsersTable = ({ searchTerm }: { searchTerm: string }) => {
-  const [users, setUsers] = useState<Array<iUser>>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [showSnack, setShowSnack] = useState(false);
@@ -50,21 +49,7 @@ export const UsersTable = ({ searchTerm }: { searchTerm: string }) => {
     setShowSnack(false);
   };
 
-  useEffect(() => {
-    const url = searchTerm
-      ? `http://localhost:5000/users/search?q=${searchTerm}`
-      : `http://localhost:5000/users?skip=${
-          page * rowsPerPage
-        }&limit=${rowsPerPage}`;
-
-    fetch(url)
-      .then((res) => res.json())
-      .then(setUsers)
-      .catch((err) => {
-        console.error(err);
-        setUsers([]);
-      });
-  }, [searchTerm, page, rowsPerPage, userCount]);
+  const users = useTableData(searchTerm, page, rowsPerPage, userCount);
 
   return (
     <Box>
