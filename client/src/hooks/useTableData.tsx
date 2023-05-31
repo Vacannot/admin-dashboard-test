@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { iUser } from "../components/userDetails/UserDetails";
+import { iUser } from "../interfaces/interface";
 
 const useTableData = (
   searchTerm: string,

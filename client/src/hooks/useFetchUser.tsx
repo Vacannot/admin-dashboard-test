@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { iUser } from "../components/userDetails/UserDetails";
+import { iUser } from "../interfaces/interface";
 
 const useFetchUser = (id: string): iUser | null => {
   const [user, setUser] = useState<iUser | null>(null);
