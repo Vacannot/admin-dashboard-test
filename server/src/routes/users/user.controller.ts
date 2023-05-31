@@ -89,24 +89,40 @@ export const deleteUser = async (
   }
 };
 
-// Search user collection with id, firstname or lastname
+// Search user collection with id, firstname or lastname, or fullname
 
 export const searchUser = async (req: Request, res: Response) => {
   const searchTerm = req.query.q as string;
-  const query = {
-    $or: [
-      { _id: searchTerm },
-      { firstName: new RegExp(searchTerm, "i") },
-      { lastName: new RegExp(searchTerm, "i") },
-    ],
-  };
 
   try {
     if (searchTerm === "") {
       res.status(500).json({ message: "Search Term is Empty" });
     }
     const db = await DB.getDB();
-    const users = await db.collection<User>("user").find(query).toArray();
+
+    const users = await db
+      .collection<User>("user")
+      .aggregate([
+        {
+          $addFields: {
+            fullName: {
+              $concat: ["$firstName", " ", "$lastName"],
+            },
+          },
+        },
+        {
+          $match: {
+            $or: [
+              { _id: searchTerm },
+              { firstName: new RegExp(searchTerm, "i") },
+              { lastName: new RegExp(searchTerm, "i") },
+              { fullName: new RegExp(searchTerm, "i") },
+            ],
+          },
+        },
+      ])
+      .toArray();
+
     res.json(users);
   } catch (err) {
     if (err instanceof Error) {

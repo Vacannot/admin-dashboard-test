@@ -1,5 +1,5 @@
 import { Box, Grid } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SelectedUserContext } from "../../context/selectedUserContext";
 import { UserProvider } from "../../context/userCountContext";
 import { UsersTable } from "../usersTable/UsersTable";
